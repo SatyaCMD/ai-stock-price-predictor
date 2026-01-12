@@ -1,7 +1,9 @@
 import yfinance as yf
 import pandas as pd
 from typing import Dict, Any, Optional
+from functools import lru_cache
 
+@lru_cache(maxsize=100)
 def fetch_stock_data(ticker: str, period: str = "1y", interval: str = "1d") -> Dict[str, Any]:
     """
     Fetch historical data for a given ticker.
@@ -30,6 +32,16 @@ def fetch_stock_data(ticker: str, period: str = "1y", interval: str = "1d") -> D
                 "currency": info.get("currency"),
                 "currentPrice": info.get("currentPrice") or info.get("regularMarketPrice"),
                 "logo_url": info.get("logo_url") or "https://logo.clearbit.com/" + (info.get("website") or "google.com").replace("https://", "").replace("http://", "").split("/")[0],
+                "marketCap": info.get("marketCap"),
+                "peRatio": info.get("trailingPE"),
+                "forwardPE": info.get("forwardPE"),
+                "eps": info.get("trailingEps"),
+                "beta": info.get("beta"),
+                "fiftyTwoWeekHigh": info.get("fiftyTwoWeekHigh"),
+                "fiftyTwoWeekLow": info.get("fiftyTwoWeekLow"),
+                "dividendYield": info.get("dividendYield"),
+                "averageVolume": info.get("averageVolume"),
+                "profitMargins": info.get("profitMargins"),
             },
             "history": data
         }
