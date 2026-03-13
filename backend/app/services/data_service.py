@@ -23,10 +23,15 @@ def fetch_stock_data(ticker: str, period: str = "1y", interval: str = "1d") -> D
         # Normalize Date/Datetime column
         if 'Datetime' in hist.columns:
             hist.rename(columns={'Datetime': 'Date'}, inplace=True)
-            # Convert to string for JSON serialization
-            hist['Date'] = hist['Date'].dt.strftime('%Y-%m-%dT%H:%M:%S')
+            # Ensure datetime is timezone aware so JS parsing doesn't shift it unexpectedly
+            if hist['Date'].dt.tz is None:
+                hist['Date'] = hist['Date'].dt.tz_localize('UTC')
+            # Convert to ISO 8601 string containing timezone information
+            hist['Date'] = hist['Date'].dt.strftime('%Y-%m-%dT%H:%M:%S%z')
         elif 'Date' in hist.columns:
-             hist['Date'] = hist['Date'].dt.strftime('%Y-%m-%d')
+            if hist['Date'].dt.tz is None:
+                hist['Date'] = hist['Date'].dt.tz_localize('UTC')
+            hist['Date'] = hist['Date'].dt.strftime('%Y-%m-%dT%H:%M:%S%z')
         
         # Convert to list of dicts for JSON response
         data = hist.to_dict(orient="records")

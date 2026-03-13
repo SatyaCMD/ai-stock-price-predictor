@@ -10,3 +10,5 @@ python-multipart
 requests
 httpx
 jinja2
+python-dotenv
+google-genai
