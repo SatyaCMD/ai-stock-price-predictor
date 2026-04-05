@@ -2,11 +2,25 @@ from ml_engine import train
 
 def get_predictions(ticker: str):
     """
-    Get predictions from all models.
+    Get predictions from all models safely, ignoring models that lack sufficient data constraints.
     """
-    lr_result = train.train_predict_linear_regression(ticker)
-    lstm_result = train.train_predict_lstm(ticker)
-    log_reg_result = train.train_predict_logistic_regression(ticker)
+    try:
+        lr_result = train.train_predict_linear_regression(ticker)
+    except Exception as e:
+        print(f"LR Model Error for {ticker}: {e}")
+        lr_result = None
+        
+    try:
+        lstm_result = train.train_predict_lstm(ticker)
+    except Exception as e:
+        print(f"LSTM Model Error for {ticker}: {e}")
+        lstm_result = None
+        
+    try:
+        log_reg_result = train.train_predict_logistic_regression(ticker)
+    except Exception as e:
+        print(f"LogReg Model Error for {ticker}: {e}")
+        log_reg_result = None
     
     return {
         "ticker": ticker,

@@ -24,7 +24,7 @@ def preprocess_data(data: pd.DataFrame):
     
     # Ensure Date is datetime
     if 'Date' in df.columns:
-        df['Date'] = pd.to_datetime(df['Date'])
+        df['Date'] = pd.to_datetime(df['Date'], utc=True)
         df.set_index('Date', inplace=True)
         
     # Moving Averages

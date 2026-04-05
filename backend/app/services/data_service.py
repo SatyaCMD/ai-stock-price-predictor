@@ -1,7 +1,18 @@
 import yfinance as yf
 import pandas as pd
+import requests
 from typing import Dict, Any, Optional
 from functools import lru_cache
+import math
+
+def clean_nans(obj):
+    if isinstance(obj, dict):
+        return {k: clean_nans(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [clean_nans(i) for i in obj]
+    elif isinstance(obj, float) and (math.isnan(obj) or math.isinf(obj)):
+        return None
+    return obj
 
 @lru_cache(maxsize=100)
 def fetch_stock_data(ticker: str, period: str = "1y", interval: str = "1d") -> Dict[str, Any]:
@@ -39,7 +50,7 @@ def fetch_stock_data(ticker: str, period: str = "1y", interval: str = "1d") -> D
         # Get info
         info = stock.info
         
-        return {
+        payload = {
             "ticker": ticker,
             "info": {
                 "name": info.get("longName"),
@@ -77,13 +88,13 @@ def fetch_stock_data(ticker: str, period: str = "1y", interval: str = "1d") -> D
             },
             "history": data
         }
+        
+        return clean_nans(payload)
     except Exception as e:
         print(f"Error fetching data for {ticker}: {e}")
         return {"error": str(e)}
 
-import requests
-
-def search_symbol(query: str, region: str = None, asset_type: str = None):
+def search_symbol(query: str, region: Optional[str] = None, asset_type: Optional[str] = None):
     """
     Search for a symbol using Yahoo Finance API with region filtering.
     """
@@ -105,7 +116,8 @@ def search_symbol(query: str, region: str = None, asset_type: str = None):
             "South Korea": ["KSC", "KOE"],
             "Singapore": ["SES"],
             "Crypto": ["CCC", "CCY"], # CCC = Crypto, CCY = Currency
-            "Forex": ["CCY"]
+            "Forex": ["CCY"],
+            "Commodities": ["NYM", "CBT", "CMX"] 
         }
         
         allowed_exchanges = REGION_EXCHANGES.get(region, []) if region and region != "Global" else []
@@ -126,17 +138,21 @@ def search_symbol(query: str, region: str = None, asset_type: str = None):
                         continue
                     elif asset_type == "Forex" and quote_type != "CURRENCY":
                         continue
+                    elif asset_type == "Commodity" and quote_type != "FUTURE":
+                        continue
                 
                 # Filter if region is specified and not Global
                 if allowed_exchanges:
-                    # Special handling for Crypto/Forex which might share exchanges
+                    # Special handling for Crypto/Forex/Commodities which might share exchanges
                     if region == "Crypto" and quote_type != "CRYPTOCURRENCY":
                         continue
                     if region == "Forex" and quote_type != "CURRENCY":
                         continue
+                    if region == "Commodities" and quote_type != "FUTURE":
+                        continue
                         
                     # General Exchange Check
-                    if exchange not in allowed_exchanges and region not in ["Crypto", "Forex"]:
+                    if exchange not in allowed_exchanges and region not in ["Crypto", "Forex", "Commodities"]:
                          continue
 
                 # Map Exchange Names (NSI -> NSE)
