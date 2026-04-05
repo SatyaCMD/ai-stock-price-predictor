@@ -61,7 +61,7 @@ export default function KYCPage() {
 
     if (user.kycStatus === 'pending') {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col pb-20">
+            <div className="bg-gray-50 flex flex-col pb-20">
                 <Navbar />
                 <div className="flex-1 w-full max-w-md mx-auto px-4 pt-48 text-center animate-in fade-in zoom-in duration-500">
                     <div className="bg-amber-100/50 p-6 rounded-full inline-flex mb-6">
@@ -83,7 +83,7 @@ export default function KYCPage() {
 
     if (user.kycStatus === 'suspended') {
         return (
-            <div className="min-h-screen bg-red-50 flex flex-col pb-20">
+            <div className="bg-red-50 flex flex-col pb-20">
                 <Navbar />
                 <div className="flex-1 w-full max-w-md mx-auto px-4 pt-48 text-center animate-in fade-in zoom-in">
                     <div className="bg-red-100 p-6 rounded-full inline-flex mb-6">
@@ -100,7 +100,7 @@ export default function KYCPage() {
 
     if (user.kycVerified) {
         return (
-            <div className="min-h-screen bg-gray-50 flex flex-col pb-20">
+            <div className="bg-gray-50 flex flex-col pb-20">
                 <Navbar />
                 <div className="flex-1 w-full max-w-md mx-auto px-4 pt-48 text-center">
                     <ShieldCheck className="w-20 h-20 text-green-500 mx-auto mb-4" />
@@ -112,7 +112,7 @@ export default function KYCPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col pb-20">
+        <div className="bg-gray-50 flex flex-col pb-20">
             <Navbar />
             <div className="flex-1 w-full max-w-3xl mx-auto px-4 pt-32">
                 <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100 animate-in fade-in slide-in-from-bottom-5">

@@ -93,7 +93,7 @@ export default function SignupPage() {
         setShowSuccessModal(true);
     };
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-row-reverse">
+        <div className="bg-gray-50 flex flex-row-reverse">
             <SuccessModal
                 isOpen={showSuccessModal}
                 onClose={handleSuccessClose}

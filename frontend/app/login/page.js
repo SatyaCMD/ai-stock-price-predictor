@@ -78,7 +78,7 @@ export default function LoginPage() {
         setShowSuccessModal(true);
     };
     return (
-        <div className="min-h-screen bg-gray-50 flex">
+        <div className="bg-gray-50 flex">
             <SuccessModal
                 isOpen={showSuccessModal}
                 onClose={handleSuccessClose}

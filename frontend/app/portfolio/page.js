@@ -848,7 +848,7 @@ export default function Portfolio() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 pb-20">
+        <div className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 pb-20">
                 <Navbar />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28">
                     {/* Header Section */}

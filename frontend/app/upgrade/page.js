@@ -63,7 +63,7 @@ export default function UpgradePage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center pb-20">
+        <div className="bg-gray-50 flex flex-col items-center pb-20">
             <Navbar />
             
             <div className="w-full max-w-5xl mx-auto px-4 pt-32">

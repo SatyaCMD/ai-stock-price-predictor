@@ -112,7 +112,7 @@ export default function AdminDashboard() {
     if (!isAdmin) return null;
 
     return (
-        <div className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
                 <div>
                     <h1 className="text-3xl font-bold flex items-center gap-3 text-gray-900">
