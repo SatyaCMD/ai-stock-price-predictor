@@ -206,9 +206,13 @@ export default function UpgradePage() {
                                             </div>
                                             
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2">Card Number (Demo only)</label>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
                                                 <div className="relative">
-                                                    <input required type="text" value={cardDetails.number} onChange={e => setCardDetails({...cardDetails, number: e.target.value})} maxLength="16" className="w-full px-5 py-4 pl-12 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none bg-gray-50 transition-all font-mono font-medium tracking-widest text-lg" placeholder="4242 4242 4242 4242" />
+                                                    <input required type="text" value={cardDetails.number} onChange={e => {
+                                                        let val = e.target.value.replace(/\D/g, '');
+                                                        val = val.replace(/(\d{4})(?=\d)/g, '$1 ');
+                                                        setCardDetails({...cardDetails, number: val})
+                                                    }} maxLength="19" className="w-full px-5 py-4 pl-12 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none bg-gray-50 transition-all font-mono font-medium tracking-widest text-lg" placeholder="4242 4242 4242 4242" />
                                                     <CreditCard className="w-6 h-6 text-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
                                                 </div>
                                             </div>

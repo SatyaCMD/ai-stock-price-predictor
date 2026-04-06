@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import axios from 'axios';
 import SuccessModal from '../../components/SuccessModal';
 
 export default function LoginPage() {
@@ -37,7 +38,7 @@ export default function LoginPage() {
         router.push('/otp');
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const sum = captchaProblem.num1 + captchaProblem.num2;
 
@@ -48,37 +49,37 @@ export default function LoginPage() {
             return;
         }
 
-        // Mock login success
-        console.log('Login successful', formData);
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/login', {
+                email: formData.email,
+                password: formData.password
+            });
 
-        // Retrieve user from "Database"
-        const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-        const user = registeredUsers.find(u => u.email === formData.email);
-
-        if (user) {
+            // Store authoritative Session Token
+            localStorage.setItem('token', response.data.access_token);
+            
+            // Map MongoDB user document state down to frontend store
             localStorage.setItem('userProfile', JSON.stringify({
-                userId: user.userId,
-                name: user.name,
-                email: user.email,
-                joinDate: user.joinDate,
-                role: user.role || (user.email === 'admin@trademind.com' ? 'admin' : 'user'),
-                trialStart: user.trialStart || user.createdAt || new Date().toISOString(),
-                isSubscribed: user.isSubscribed || false,
-                kycVerified: user.kycVerified || false,
-                kycDetails: user.kycDetails || null
+                userId: response.data.user.id,
+                name: response.data.user.name,
+                email: response.data.user.email,
+                joinDate: response.data.user.joinDate || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                role: 'user',
+                isSubscribed: false,
+                portfolio: response.data.user.portfolio
             }));
-        } else {
-            setError('Account not found. Please sign up first.');
-            return;
+
+            // Force global listener sync
+            window.dispatchEvent(new Event('authChange'));
+            setShowSuccessModal(true);
+
+        } catch (err) {
+            setError(err.response?.data?.detail || 'Account not found or invalid credentials.');
+            generateCaptcha();
         }
-
-        // Notify other components (like Navbar) of the change
-        window.dispatchEvent(new Event('authChange'));
-
-        setShowSuccessModal(true);
     };
     return (
-        <div className="bg-gray-50 flex">
+        <div className="bg-gray-50 flex min-h-screen w-full">
             <SuccessModal
                 isOpen={showSuccessModal}
                 onClose={handleSuccessClose}

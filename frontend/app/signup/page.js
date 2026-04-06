@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
+import axios from 'axios';
 import SuccessModal from '../../components/SuccessModal';
 
 export default function SignupPage() {
@@ -40,7 +41,7 @@ export default function SignupPage() {
         router.push('/login');
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const sum = captchaProblem.num1 + captchaProblem.num2;
 
@@ -56,44 +57,35 @@ export default function SignupPage() {
             return;
         }
 
-        // Mock signup success
-        console.log('Signup successful', formData);
+        try {
+            const response = await axios.post('http://127.0.0.1:8000/api/v1/auth/signup', {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password
+            });
 
-        // Create new user object
-        const newUser = {
-            userId: 'USR-' + Math.floor(100000 + Math.random() * 900000) + '-' + Math.floor(1000 + Math.random() * 9000),
-            name: formData.name,
-            email: formData.email,
-            password: formData.password, // In a real app, never store plain text passwords!
-            joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }), // e.g., "Jan 2024"
-            createdAt: new Date().toISOString(),
-            role: formData.email.toLowerCase() === 'admin@trademind.com' ? 'admin' : 'user',
-            trialStart: new Date().toISOString(),
-            isSubscribed: false
-        };
+            // Save authoritative response token & metadata from MongoDB
+            localStorage.setItem('token', response.data.access_token);
+            localStorage.setItem('userProfile', JSON.stringify({
+                userId: response.data.user.id,
+                name: response.data.user.name,
+                email: response.data.user.email,
+                joinDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+                role: 'user', // default
+                isSubscribed: false
+            }));
 
-        // Save to "Database" (registeredUsers)
-        const existingUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
-        localStorage.setItem('registeredUsers', JSON.stringify([...existingUsers, newUser]));
+            // Notify UI components
+            window.dispatchEvent(new Event('authChange'));
+            setShowSuccessModal(true);
 
-        // Store user info for Navbar (auto-login)
-        localStorage.setItem('userProfile', JSON.stringify({
-            userId: newUser.userId,
-            name: newUser.name,
-            email: newUser.email,
-            joinDate: newUser.joinDate,
-            role: newUser.role,
-            trialStart: newUser.trialStart,
-            isSubscribed: newUser.isSubscribed
-        }));
-
-        // Notify other components
-        window.dispatchEvent(new Event('authChange'));
-
-        setShowSuccessModal(true);
+        } catch (err) {
+            setError(err.response?.data?.detail || 'An error occurred connecting to the database.');
+            generateCaptcha();
+        }
     };
     return (
-        <div className="bg-gray-50 flex flex-row-reverse">
+        <div className="bg-gray-50 flex min-h-screen w-full flex-row-reverse">
             <SuccessModal
                 isOpen={showSuccessModal}
                 onClose={handleSuccessClose}

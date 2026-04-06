@@ -53,7 +53,7 @@ export default function OTPPage() {
     };
 
     return (
-        <div className="bg-gray-50 flex flex-row">
+        <div className="bg-gray-50 flex min-h-screen w-full flex-row">
             {/* Left Side - Interactive Visual */}
             <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 p-12 flex-col justify-center relative overflow-hidden">
                 <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
