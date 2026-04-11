@@ -15,8 +15,11 @@
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
     "react": "19.2.3",
+    "react-datepicker": "^9.1.0",
     "react-dom": "19.2.3",
     "react-hot-toast": "^2.6.0",
+    "react-phone-input-2": "^2.15.1",
+    "react-phone-number-input": "^3.4.16",
     "react-ts-tradingview-widgets": "^1.2.8",
     "recharts": "^3.6.0"
   },

@@ -20,6 +20,50 @@
 *   📈 **Diverse Asset Classes**: Supports Stocks, Crypto, Forex, and Mutual Funds.
 *   🧠 **Advanced AI Predictions**: Uses powerful ML models like Linear Regression, LSTM, and more for future price trends.
 *   📊 **Interactive Dashboard**: Experience real-time charts, indicators, and deep analytics.
+*   💳 **Trading Simulator**: A comprehensive paper trading environment connected to real-time market data.
+*   🤖 **AI Chatbot**: A personalized trading assistant that provides insights and answers financial questions.
+*   🔒 **Secure Environment**: Real-time mock authentication and administrative controls.
+
+<hr/>
+
+## 🏗️ Project Architecture
+
+<details>
+  <summary><b>📊 1. Data Pipeline & ML Engine</b> (Click to expand)</summary>
+  <br/>
+  
+  *   **Live Data Fetching**: Utilizes `yfinance` to grab up-to-date market information across multiple asset classes globally.
+  *   **Machine Learning Models**: 
+      *   **Linear Regression**: Used as a fast baseline model for short-term trend predictions.
+      *   **LSTM Models**: Used for long-term pattern recognition and trend analysis.
+  *   **Pre-Processing**: Handles missing values, scaling, and feature engineering to feed the optimal data into our models.
+</details>
+
+<details>
+  <summary><b>🖥️ 2. Core Backend Services</b> (Click to expand)</summary>
+  <br/>
+  
+  *   **API Layer**: Built entirely in Fastapi to ensure high performance and fully documented asynchronous endpoints.
+  *   **Database Integration**: Leverages MongoDB AsyncIO Motor driver to manage user profiles, chat histories, portfolios, and transaction data scalably.
+  *   **Stateful Services**: Connects with LLMs (e.g., Google GenAI) for intelligent trading chats and market insight generations.
+</details>
+
+<details>
+  <summary><b>📱 3. User Interface</b> (Click to expand)</summary>
+  <br/>
+
+  *   **Framework**: Next.js 14 utilizing the App router for high SEO and rendering performance.
+  *   **Styling**: A fully responsive UI featuring dark/light modes powered by TailwindCSS and Custom components for a premium look.
+  *   **State Management**: Real-time connection with backend APIs using robust hooks and scalable context providers.
+</details>
+
+<hr/>
+
+## 🎯 Use Cases
+
+*   **Retail Investors**: Use AI predictions to validate their trading ideas and paper trade risk-free.
+*   **Day Traders**: Utilize the real-time advanced dashboard and multi-market insights.
+*   **Financial Enthusiasts**: Query the AI chatbot to understand market conditions without spending hours reading reports.
 
 <hr/>
 

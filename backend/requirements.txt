@@ -12,3 +12,4 @@ httpx
 jinja2
 python-dotenv
 google-genai
+motor

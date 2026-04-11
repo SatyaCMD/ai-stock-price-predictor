@@ -1,6 +1,7 @@
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
+import certifi
 
 load_dotenv()
 
@@ -14,7 +15,11 @@ db = Database()
 
 async def connect_to_mongo():
     try:
-        db.client = AsyncIOMotorClient(MONGODB_URL)
+        db.client = AsyncIOMotorClient(
+            MONGODB_URL, 
+            tlsCAFile=certifi.where(), 
+            tlsAllowInvalidCertificates=True
+        )
         db.db = db.client.trademind_ai
         print("Successfully connected to MongoDB!")
     except Exception as e:

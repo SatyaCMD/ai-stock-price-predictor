@@ -1,19 +1,24 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ShieldCheck, CheckSquare, Fingerprint, Clock, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, CheckSquare, Fingerprint, Clock, AlertTriangle, UploadCloud } from 'lucide-react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 import Navbar from '../../components/Navbar';
 
 export default function KYCPage() {
     const router = useRouter();
     const [formData, setFormData] = useState({
         fullName: '',
-        dob: '',
-        countryCode: '+1',
+        dob: null,
         mobile: '',
         docType: 'SSN',
         idNumber: '',
-        address: ''
+        address: '',
+        docFront: null,
+        docBack: null
     });
     const [agreements, setAgreements] = useState({ terms: false, data: false, risk: false });
     const [user, setUser] = useState(null);
@@ -28,24 +33,25 @@ export default function KYCPage() {
     }, [router]);
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+    const handleFileChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.files[0] });
     const handleCheckbox = (e) => setAgreements({ ...agreements, [e.target.name]: e.target.checked });
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         const registeredUsers = JSON.parse(localStorage.getItem('registeredUsers') || '[]');
         const userIndex = registeredUsers.findIndex(u => u.email === user.email);
-        
+
         const kycData = { ...formData };
-        const updatedProfile = { 
-            ...user, 
-            kycStatus: 'pending', 
+        const updatedProfile = {
+            ...user,
+            kycStatus: 'pending',
             kycSubmittedAt: Date.now(),
-            kycDetails: kycData 
+            kycDetails: kycData
         };
 
         localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-        
+
         if (userIndex !== -1) {
             registeredUsers[userIndex].kycStatus = 'pending';
             registeredUsers[userIndex].kycSubmittedAt = updatedProfile.kycSubmittedAt;
@@ -126,7 +132,7 @@ export default function KYCPage() {
                             </div>
                         </div>
                     </div>
-                    
+
                     <form onSubmit={handleSubmit} className="p-8">
                         <div className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -136,23 +142,38 @@ export default function KYCPage() {
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                                    <input required type="date" name="dob" value={formData.dob} onChange={handleChange} className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50 font-medium text-gray-800" />
+                                    <DatePicker
+                                        required
+                                        selected={formData.dob}
+                                        onChange={(date) => setFormData({ ...formData, dob: date })}
+                                        showMonthDropdown
+                                        showYearDropdown
+                                        dropdownMode="scroll"
+                                        scrollableYearDropdown
+                                        yearDropdownItemNumber={100}
+                                        maxDate={new Date()}
+                                        placeholderText="MM/DD/YYYY"
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50 font-medium text-gray-800"
+                                    />
+                                    <style jsx global>{`
+                                        .react-datepicker-wrapper { width: 100%; display: block; }
+                                    `}</style>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
-                                    <div className="flex">
-                                        <select name="countryCode" value={formData.countryCode} onChange={handleChange} className="px-3 py-3 rounded-l-xl border border-r-0 border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-gray-100 font-medium text-gray-800 border-r border-gray-200">
-                                            <option value="+1">+1 (US/CA)</option>
-                                            <option value="+44">+44 (UK)</option>
-                                            <option value="+91">+91 (IN)</option>
-                                            <option value="+61">+61 (AU)</option>
-                                            <option value="+86">+86 (CN)</option>
-                                        </select>
-                                        <input required type="tel" name="mobile" value={formData.mobile} onChange={handleChange} className="w-full px-4 py-3 rounded-r-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50 font-medium text-gray-800" placeholder="(555) 000-0000" />
-                                    </div>
+                                    <PhoneInput
+                                        country={'us'}
+                                        value={formData.mobile}
+                                        onChange={(value) => setFormData({ ...formData, mobile: value || '' })}
+                                        inputStyle={{ width: '100%', height: '48px', border: 'none', background: 'transparent' }}
+                                        buttonStyle={{ background: 'transparent', border: 'none' }}
+                                        containerClass="w-full rounded-xl border border-gray-300 focus-within:ring-2 focus-within:ring-blue-500 bg-gray-50 focus-within:border-blue-500"
+                                        dropdownStyle={{ top: '100%', bottom: 'auto' }}
+                                        enableSearch={true}
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Government ID Details</label>
@@ -171,6 +192,29 @@ export default function KYCPage() {
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Full Residential Address</label>
                                 <textarea required name="address" value={formData.address} onChange={handleChange} rows="3" className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none bg-gray-50 font-medium text-gray-800" placeholder="123 Main St..."></textarea>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Upload ID (Front)</label>
+                                    <div className="relative border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 transition cursor-pointer overflow-hidden">
+                                        <input required type="file" name="docFront" accept="image/*,.pdf" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                                        <UploadCloud className={`w-6 h-6 mx-auto mb-2 ${formData.docFront ? 'text-green-500' : 'text-blue-500'}`} />
+                                        <span className="text-sm text-gray-500 font-medium truncate block px-2">
+                                            {formData.docFront ? formData.docFront.name : "Click to Upload Front"}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Upload ID (Back)</label>
+                                    <div className="relative border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:bg-gray-50 transition cursor-pointer overflow-hidden">
+                                        <input required type="file" name="docBack" accept="image/*,.pdf" onChange={handleFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                                        <UploadCloud className={`w-6 h-6 mx-auto mb-2 ${formData.docBack ? 'text-green-500' : 'text-blue-500'}`} />
+                                        <span className="text-sm text-gray-500 font-medium truncate block px-2">
+                                            {formData.docBack ? formData.docBack.name : "Click to Upload Back"}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
