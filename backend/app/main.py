@@ -31,6 +31,8 @@ app.include_router(stocks.router, prefix="/api/v1", tags=["stocks"])
 app.include_router(calculator.router, prefix="/api/v1", tags=["calculator"])
 app.include_router(predictions.router, prefix="/api/v1", tags=["predictions"])
 app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
+from app.api import user
+app.include_router(user.router, prefix="/api/v1/user", tags=["user"])
 
 @app.get("/")
 def read_root():
