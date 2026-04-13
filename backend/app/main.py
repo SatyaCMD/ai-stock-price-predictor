@@ -35,3 +35,5 @@ app.include_router(chat.router, prefix="/api/v1/chat", tags=["chat"])
 @app.get("/")
 def read_root():
     return {"message": "Welcome to AI Stock Price Predictor API"}
+
+#
